@@ -1,0 +1,138 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  --font-mono: "Fira Code", "Source Code Pro", "Courier New", Courier, monospace;
+  --font-sans: "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+  --color-text: #0F172A;
+  --color-text-reverse: #F8FAFC;
+  --color-text-number: blue;
+  --color-text-string: #353835;
+  --color-quotes: #505350;
+
+  --color-bg: #F8FAFC;
+  --color-bg-reverse: #020617;
+
+  --color-border: #334155;
+  --color-border-secondary: #94A3B8;
+
+  --size-border: 1px;
+  --size-1: .25rem;
+  --size-2: .5rem;
+  --size-3: .75rem;
+  --size-4: 1rem;
+
+  --border-radius: 3px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+.chain-link,
+.chain-name {
+  display: flex;
+  justify-content: center;
+}
+
+.chain-name {
+  font-style: italic;
+}
+
+.scope-chains {
+  display: inline-flex;
+  justify-content: flex-start;
+  gap: var(--size-3);
+}
+
+.scope-chains>* {
+  flex: 1;
+  min-width: 16em;
+}
+
+.scope-chain {
+  padding: var(--size-2) var(--size-3);
+  border: var(--size-border) solid var(--color-border-secondary);
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+}
+
+.scope {
+  display: inline-grid;
+  padding: var(--size-2) var(--size-3);
+  border: var(--size-border) solid var(--color-border);
+  border-radius: var(--border-radius);
+  grid-template-rows: auto auto 1fr;
+  gap: var(--size-1);
+}
+
+.scope>.bindings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+}
+
+.bind {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--size-1);
+}
+
+.scope-name {
+  border-bottom: var(--size-border) solid var(--color-border-secondary);
+  padding-bottom: var(--size-2);
+  margin-bottom: var(--size-2);
+  text-align: center;
+  font-weight: bold;
+}
+
+.bind-key,
+.val {
+  display: inline-flex;
+}
+
+.bind-key {
+  font-family: var(--font-mono);
+}
+
+.val {
+  justify-content: flex-end;
+  font-family: var(--font-mono);
+}
+
+.val:is(.val-num, .val-fn) {
+  font-weight: bold;
+}
+
+.val-num {
+  color: var(--color-text-number);
+}
+
+.val-str {
+  quotes: "❝" "❞";
+  font-family: var(--font-mono);
+  color: var(--color-text-string);
+}
+
+.val-str:before {
+  content: open-quote;
+  color: var(--color-quotes);
+}
+
+.val-str:after {
+  content: close-quote;
+  color: var(--color-quotes);
+}
