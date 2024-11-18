@@ -35,16 +35,16 @@ export class VM extends Record({ env: Env.withLocal(), stack: new Stack() }) {
     }
   }
   enterAt(key, name, binds) {
-    return this.doToEnv(env => env.enterAt(key, name, binds));
+    return this.doToEnv((env) => env.enterAt(key, name, binds));
   }
 
   bindAt(key, name, value) {
-    return this.doToEnv(env => env.bindAt(key, name, value));
+    return this.doToEnv((env) => env.bindAt(key, name, value));
   }
 
   rebindAt(key, name, value) {
-    return this.doToEnv(envIn => {
-      const {env} = envIn.rebindAt(key, name, value);
+    return this.doToEnv((envIn) => {
+      const { env } = envIn.rebindAt(key, name, value);
       return env;
     });
   }
@@ -56,13 +56,13 @@ class Instr {
   }
 }
 
-class Nop extends Instr {
+export class Nop extends Instr {
   toString() {
     return "Nop";
   }
 }
 
-class Push extends Instr {
+export class Push extends Instr {
   constructor(value) {
     super();
     this.value = value;
@@ -77,7 +77,7 @@ class Push extends Instr {
   }
 }
 
-class FindAt extends Instr {
+export class FindAt extends Instr {
   constructor(key, name) {
     super();
     this.key = key;
@@ -93,7 +93,7 @@ class FindAt extends Instr {
   }
 }
 
-class Find extends FindAt {
+export class Find extends FindAt {
   constructor(name) {
     super(LOCAL, name);
   }
@@ -103,7 +103,7 @@ class Find extends FindAt {
   }
 }
 
-class EnterAt extends Instr {
+export class EnterAt extends Instr {
   constructor(key, name) {
     super();
     this.key = key;
@@ -119,7 +119,7 @@ class EnterAt extends Instr {
   }
 }
 
-class Enter extends EnterAt {
+export class Enter extends EnterAt {
   constructor(name) {
     super(LOCAL, name);
   }
@@ -129,7 +129,7 @@ class Enter extends EnterAt {
   }
 }
 
-class BindAt extends Instr {
+export class BindAt extends Instr {
   constructor(key, name) {
     super();
     this.key = key;
@@ -145,7 +145,7 @@ class BindAt extends Instr {
   }
 }
 
-class Bind extends BindAt {
+export class Bind extends BindAt {
   constructor(name) {
     super(LOCAL, name);
   }
@@ -155,7 +155,7 @@ class Bind extends BindAt {
   }
 }
 
-class RebindAt extends Instr {
+export class RebindAt extends Instr {
   constructor(key, name) {
     super();
     this.key = key;
@@ -171,7 +171,7 @@ class RebindAt extends Instr {
   }
 }
 
-class Rebind extends RebindAt {
+export class Rebind extends RebindAt {
   constructor(name) {
     super(LOCAL, name);
   }

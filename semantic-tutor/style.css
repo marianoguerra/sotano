@@ -40,28 +40,28 @@ body {
   background-color: var(--color-bg);
 }
 
-.chain-link,
-.chain-name {
+.frame-link,
+.frame-name {
   display: flex;
   justify-content: center;
 }
 
-.chain-name {
+.frame-name {
   font-style: italic;
 }
 
-.scope-chains {
+.env {
   display: inline-flex;
   justify-content: flex-start;
   gap: var(--size-3);
 }
 
-.scope-chains>* {
+.env>* {
   flex: 1;
   min-width: 16em;
 }
 
-.scope-chain {
+.scope {
   padding: var(--size-2) var(--size-3);
   border: var(--size-border) solid var(--color-border-secondary);
   border-radius: var(--border-radius);
@@ -70,7 +70,7 @@ body {
   gap: var(--size-1);
 }
 
-.scope {
+.frame {
   display: inline-grid;
   padding: var(--size-2) var(--size-3);
   border: var(--size-border) solid var(--color-border);
@@ -79,19 +79,14 @@ body {
   gap: var(--size-1);
 }
 
-.scope>.bindings {
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-1);
-}
-
-.bind {
-  display: flex;
+.binds {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   justify-content: space-between;
-  gap: var(--size-1);
+  gap: var(--size-2);
 }
 
-.scope-name {
+.frame-name {
   border-bottom: var(--size-border) solid var(--color-border-secondary);
   padding-bottom: var(--size-2);
   margin-bottom: var(--size-2);
@@ -100,7 +95,7 @@ body {
 }
 
 .bind-key,
-.val {
+.bind-val {
   display: inline-flex;
 }
 
@@ -108,7 +103,7 @@ body {
   font-family: var(--font-mono);
 }
 
-.val {
+.bind-val {
   justify-content: flex-end;
   font-family: var(--font-mono);
 }
@@ -135,4 +130,39 @@ body {
 .val-str:after {
   content: close-quote;
   color: var(--color-quotes);
+}
+
+.instr {
+  display: flex;
+  gap: var(--size-3);
+  align-items: center;
+}
+
+.instr-box.active {
+  outline: var(--size-border) solid var(--color-border);
+}
+
+.op-name {
+  font-family: var(--font-mono);
+}
+
+.code,
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-2);
+}
+
+.vmview {
+  padding: var(--size-3);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--size-3);
+}
+
+.vm {
+  padding: var(--size-3);
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: var(--size-3);
 }
