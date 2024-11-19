@@ -74,7 +74,7 @@ export class Scope extends Record({ name: "Scope", frames: Stack() }) {
 
 export const LOCAL = "local";
 
-export class Env extends Record({ scopes: new OMap() }) {
+export class Env extends Record({ current: LOCAL, scopes: new OMap() }) {
   constructor() {
     super();
   }
@@ -87,29 +87,33 @@ export class Env extends Record({ scopes: new OMap() }) {
     return this.scopes.get(LOCAL, null);
   }
 
+  setCurrent(v) {
+    return this.set("current", v);
+  }
+
   addScope(key, fn) {
     const scope = new Scope(key);
     return this.setIn(["scopes", key], fn ? fn(scope) : scope);
   }
 
   enter(name, binds) {
-    return this.enterAt(LOCAL, name, binds);
+    return this.enterAt(this.current, name, binds);
   }
 
   leave() {
-    return this.leaveAt(LOCAL);
+    return this.leaveAt(this.current);
   }
 
   bind(name, value) {
-    return this.bindAt(LOCAL, name, value);
+    return this.bindAt(this.current, name, value);
   }
 
   rebind(name, value) {
-    return this.rebindAt(LOCAL, name, value);
+    return this.rebindAt(this.current, name, value);
   }
 
   find(name, dval = null) {
-    return this.findAt(LOCAL, name, dval);
+    return this.findAt(this.current, name, dval);
   }
 
   doTo(key, fn) {

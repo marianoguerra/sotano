@@ -34,11 +34,17 @@ export class VM extends Record({ env: Env.withLocal(), stack: new Stack() }) {
       return this.push(v);
     }
   }
+
   enterAt(key, name, binds) {
     return this.doToEnv((env) => env.enterAt(key, name, binds));
   }
+
   leaveAt(key) {
     return this.doToEnv((env) => env.leaveAt(key));
+  }
+
+  setCurrent(key) {
+    return this.doToEnv((env) => env.setCurrent(key));
   }
 
   bindAt(key, name, value) {
@@ -168,6 +174,21 @@ export class Leave extends LeaveAt {
 
   toString() {
     return `Leave`;
+  }
+}
+
+export class SetCurrent extends Instr {
+  constructor(key) {
+    super();
+    this.key = key;
+  }
+
+  exec(vm) {
+    return vm.setCurrent(this.key);
+  }
+
+  toString() {
+    return `SetCurrent(${this.key})`;
   }
 }
 
@@ -418,6 +439,10 @@ export function leaveAt(key) {
 
 export function leave() {
   return new Leave();
+}
+
+export function setCurrent(key) {
+  return new SetCurrent(key);
 }
 
 export function bindAt(key, name) {
