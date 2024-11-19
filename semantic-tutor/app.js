@@ -6,6 +6,7 @@ import { Env, Scope, Frame } from "./names.js";
 import {
   VM,
   push,
+  pop,
   bind,
   rebind,
   find,
@@ -13,6 +14,7 @@ import {
   nop,
   Nop,
   Push,
+  Pop,
   FindAt,
   Find,
   EnterAt,
@@ -21,6 +23,26 @@ import {
   Bind,
   RebindAt,
   Rebind,
+  add,
+  Add,
+  sub,
+  Sub,
+  mul,
+  Mul,
+  div as div_,
+  Div,
+  eq,
+  Eq,
+  notEq,
+  NotEq,
+  gt,
+  Gt,
+  ge,
+  Ge,
+  lt,
+  Lt,
+  le,
+  Le,
 } from "./namevm.js";
 
 const { div, span, code, button, img } = genTags;
@@ -85,7 +107,7 @@ Scope.prototype.toDOM = function () {
   const len = this.frames.size,
     items = new Array(len * 2 - 1);
 
-  for (let i = 0, j = 0; j < len; j++) {
+  for (let i = 0, j = len - 1; j >= 0; j--) {
     if (i > 0) {
       items[i] = div("frame-link", "⬆️");
       i += 1;
@@ -115,7 +137,7 @@ Stack.prototype.toDOM = function () {
   const len = this.size,
     items = new Array(len);
 
-  for (let i = 0; i < len; i++) {
+  for (let i = len - 1; i >= 0; i--) {
     items[i] = rValue(this.get(i));
   }
 
@@ -131,6 +153,9 @@ Nop.prototype.toDOM = function () {
 };
 Push.prototype.toDOM = function () {
   return div("instr instr-push", span("op-name", "Push"), rValue(this.value));
+};
+Pop.prototype.toDOM = function () {
+  return div("instr instr-pop", span("op-name", "Pop"));
 };
 FindAt.prototype.toDOM = function () {
   return div(
@@ -173,6 +198,37 @@ Rebind.prototype.toDOM = function () {
   );
 };
 
+Add.prototype.toDOM = function () {
+  return div("instr instr-add", this.toString());
+};
+Sub.prototype.toDOM = function () {
+  return div("instr instr-sub", this.toString());
+};
+Mul.prototype.toDOM = function () {
+  return div("instr instr-mul", this.toString());
+};
+Div.prototype.toDOM = function () {
+  return div("instr instr-div", this.toString());
+};
+Eq.prototype.toDOM = function () {
+  return div("instr instr-eq", this.toString());
+};
+NotEq.prototype.toDOM = function () {
+  return div("instr instr-ne", this.toString());
+};
+Gt.prototype.toDOM = function () {
+  return div("instr instr-gt", this.toString());
+};
+Ge.prototype.toDOM = function () {
+  return div("instr instr-ge", this.toString());
+};
+Lt.prototype.toDOM = function () {
+  return div("instr instr-lt", this.toString());
+};
+Le.prototype.toDOM = function () {
+  return div("instr instr-le", this.toString());
+};
+
 function rValue(v) {
   switch (typeof v) {
     case "string":
@@ -211,6 +267,12 @@ class VMView {
       push(v2),
       rebind(k1),
       find(k1),
+      nop(),
+      push(v1),
+      push(v2),
+      add(),
+      mul(),
+      pop(),
     ];
   }
   toDOM() {
@@ -220,7 +282,7 @@ class VMView {
     const instrs = new Array(this.code.length);
     for (let i = 0; i < this.code.length; i++) {
       instrs[i] = div(
-        this.pc === i ? "instr-box active" : "instr-box",
+        this.pc === i + 1 ? "instr-box active" : "instr-box",
         this.code[i].toDOM(),
       );
     }

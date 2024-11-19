@@ -97,6 +97,7 @@ body {
 .bind-key,
 .bind-val {
   display: inline-flex;
+  align-items: center;
 }
 
 .bind-key {
@@ -108,7 +109,12 @@ body {
   font-family: var(--font-mono);
 }
 
-.val:is(.val-num, .val-fn) {
+.val {
+  display: inline-flex;
+  align-items: center;
+}
+
+.val.val-fn {
   font-weight: bold;
 }
 
@@ -134,15 +140,19 @@ body {
 
 .instr {
   display: flex;
-  gap: var(--size-3);
+  gap: var(--size-1);
+  padding: var(--size-1);
   align-items: center;
 }
+
 
 .instr-box.active {
   outline: var(--size-border) solid var(--color-border);
 }
 
 .op-name {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-mono);
 }
 

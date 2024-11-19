@@ -77,6 +77,20 @@ export class Push extends Instr {
   }
 }
 
+export class Pop extends Instr {
+  constructor() {
+    super();
+  }
+
+  exec(vm) {
+    return vm.pop();
+  }
+
+  toString() {
+    return `Pop`;
+  }
+}
+
 export class FindAt extends Instr {
   constructor(key, name) {
     super();
@@ -181,12 +195,125 @@ export class Rebind extends RebindAt {
   }
 }
 
+class BinOp extends Instr {
+  exec(vm) {
+    const a = vm.peek();
+    vm = vm.pop();
+    const b = vm.peek();
+    vm = vm.pop();
+    return vm.push(this.applyOp(a, b));
+  }
+
+  applyOp(a, _b) {
+    throw new Error("Not Implemented");
+  }
+
+  toString() {
+    return `BinOp`;
+  }
+}
+
+export class Add extends BinOp {
+  applyOp(a, b) {
+    return a + b;
+  }
+
+  toString() {
+    return `Add`;
+  }
+}
+export class Sub extends BinOp {
+  applyOp(a, b) {
+    return a - b;
+  }
+
+  toString() {
+    return `Sub`;
+  }
+}
+export class Mul extends BinOp {
+  applyOp(a, b) {
+    return a * b;
+  }
+
+  toString() {
+    return `Mul`;
+  }
+}
+export class Div extends BinOp {
+  applyOp(a, b) {
+    return a / b;
+  }
+
+  toString() {
+    return `Div`;
+  }
+}
+export class Eq extends BinOp {
+  applyOp(a, b) {
+    return a === b;
+  }
+
+  toString() {
+    return `Eq`;
+  }
+}
+export class NotEq extends BinOp {
+  applyOp(a, b) {
+    return a !== b;
+  }
+
+  toString() {
+    return `NotEq`;
+  }
+}
+export class Gt extends BinOp {
+  applyOp(a, b) {
+    return a > b;
+  }
+
+  toString() {
+    return `Gt`;
+  }
+}
+export class Ge extends BinOp {
+  applyOp(a, b) {
+    return a >= b;
+  }
+
+  toString() {
+    return `Ge`;
+  }
+}
+export class Lt extends BinOp {
+  applyOp(a, b) {
+    return a < b;
+  }
+
+  toString() {
+    return `Lt`;
+  }
+}
+export class Le extends BinOp {
+  applyOp(a, b) {
+    return a <= b;
+  }
+
+  toString() {
+    return `Le`;
+  }
+}
+
 export function nop() {
   return new Nop();
 }
 
 export function push(value) {
   return new Push(value);
+}
+
+export function pop() {
+  return new Pop();
 }
 
 export function findAt(key, name) {
@@ -219,4 +346,35 @@ export function rebindAt(key, name) {
 
 export function rebind(name) {
   return new Rebind(name);
+}
+
+export function add() {
+  return new Add();
+}
+export function sub() {
+  return new Sub();
+}
+export function mul() {
+  return new Mul();
+}
+export function div() {
+  return new Div();
+}
+export function eq() {
+  return new Eq();
+}
+export function notEq() {
+  return new NotEq();
+}
+export function gt() {
+  return new Gt();
+}
+export function ge() {
+  return new Ge();
+}
+export function lt() {
+  return new Lt();
+}
+export function le() {
+  return new Le();
 }
