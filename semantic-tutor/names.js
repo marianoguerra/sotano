@@ -20,21 +20,24 @@ export class Frame extends Record({ name: "<frame>", binds: OMap() }) {
   }
 }
 
-export class Scope extends Record({ frames: Stack() }) {
-  constructor(frames = []) {
-    super({ frames: new Stack(frames) });
-  }
-
-  static withFrame(name, binds) {
-    return new Scope([new Frame(name, binds)]);
+export class Scope extends Record({ name: "Scope", frames: Stack() }) {
+  constructor(name, frames = []) {
+    super({ name, frames: new Stack(frames) });
   }
 
   withFrames(frames) {
-    return this.set("frames", Stack.isStack(frames) ? frames : new Stack(frames));
+    return this.set(
+      "frames",
+      Stack.isStack(frames) ? frames : new Stack(frames),
+    );
   }
 
   enter(name, binds) {
-    return this.update("frames", f => f.push(new Frame(name, binds)));
+    return this.update("frames", (f) => f.push(new Frame(name, binds)));
+  }
+
+  leave() {
+    return this.update("frames", (f) => f.pop());
   }
 
   bind(name, value) {
@@ -44,7 +47,7 @@ export class Scope extends Record({ frames: Stack() }) {
   }
 
   rebind(name, value) {
-    const i = this.frames.findIndex(f => f.hasName(name)),
+    const i = this.frames.findIndex((f) => f.hasName(name)),
       found = i !== -1;
 
     if (found) {
@@ -85,12 +88,16 @@ export class Env extends Record({ scopes: new OMap() }) {
   }
 
   addScope(key, fn) {
-    const scope = new Scope();
+    const scope = new Scope(key);
     return this.setIn(["scopes", key], fn ? fn(scope) : scope);
   }
 
   enter(name, binds) {
     return this.enterAt(LOCAL, name, binds);
+  }
+
+  leave() {
+    return this.leaveAt(LOCAL);
   }
 
   bind(name, value) {
@@ -110,11 +117,15 @@ export class Env extends Record({ scopes: new OMap() }) {
   }
 
   enterAt(key, name, binds) {
-    return this.doTo(key, s => s.enter(name, binds));
+    return this.doTo(key, (s) => s.enter(name, binds));
+  }
+
+  leaveAt(key) {
+    return this.doTo(key, (s) => s.leave());
   }
 
   bindAt(key, name, value) {
-    return this.doTo(key, s => s.bind(name, value));
+    return this.doTo(key, (s) => s.bind(name, value));
   }
 
   rebindAt(key, name, value) {

@@ -11,6 +11,8 @@ import {
   rebind,
   find,
   enter,
+  leave,
+  leaveAt,
   nop,
   Nop,
   Push,
@@ -19,6 +21,8 @@ import {
   Find,
   EnterAt,
   Enter,
+  LeaveAt,
+  Leave,
   BindAt,
   Bind,
   RebindAt,
@@ -113,7 +117,7 @@ Frame.prototype.toDOM = function () {
 
 Scope.prototype.toDOM = function () {
   const len = this.frames.size,
-    items = new Array(len * 2 - 1);
+    items = len > 0 ? new Array(len * 2 - 1) : [];
 
   for (let i = 0, j = len - 1; j >= 0; j--) {
     if (i > 0) {
@@ -125,7 +129,7 @@ Scope.prototype.toDOM = function () {
     i += 1;
   }
 
-  return div("scope", ...items);
+  return div("scope", span("scope-title", this.name), ...items);
 };
 
 Env.prototype.toDOM = function () {
@@ -182,6 +186,16 @@ EnterAt.prototype.toDOM = function () {
 };
 Enter.prototype.toDOM = function () {
   return div("instr instr-enter", span("op-name", "Enter"), rValue(this.name));
+};
+LeaveAt.prototype.toDOM = function () {
+  return div(
+    "instr instr-leaveat",
+    span("op-name", "LeaveAt"),
+    rValue(this.key),
+  );
+};
+Leave.prototype.toDOM = function () {
+  return div("instr instr-leave", span("op-name", "Leave"));
 };
 BindAt.prototype.toDOM = function () {
   return div(
@@ -298,6 +312,8 @@ class VMView {
       eq(),
       not(),
       pop(),
+      leave(),
+      leaveAt(LOCAL),
     ];
   }
   toDOM() {
@@ -311,7 +327,7 @@ class VMView {
         this.code[i].toDOM(),
       );
     }
-    return div("code", ...instrs);
+    return div("code", span("code-title", "Code"), ...instrs);
   }
   next() {
     if (this.code[this.pc]) {

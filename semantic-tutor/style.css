@@ -10,8 +10,9 @@
 
   --color-text: #0F172A;
   --color-text-reverse: #F8FAFC;
-  --color-text-number: blue;
+  --color-text-number: #0C4A6E;
   --color-text-string: #353835;
+  --color-text-bool: #134E4A;
   --color-quotes: #505350;
 
   --color-bg: #F8FAFC;
@@ -25,6 +26,8 @@
   --size-2: .5rem;
   --size-3: .75rem;
   --size-4: 1rem;
+  --size-5: 1.5rem;
+  --size-6: 2rem;
 
   --border-radius: 3px;
 }
@@ -61,13 +64,21 @@ body {
   min-width: 16em;
 }
 
-.scope {
+.scope,
+.stack,
+.code {
   padding: var(--size-2) var(--size-3);
   border: var(--size-border) solid var(--color-border-secondary);
   border-radius: var(--border-radius);
   display: flex;
   flex-direction: column;
   gap: var(--size-1);
+}
+
+.stack {
+  min-width: 8em;
+  align-items: center;
+  gap: var(--size-3);
 }
 
 .frame {
@@ -86,7 +97,10 @@ body {
   gap: var(--size-2);
 }
 
-.frame-name {
+.frame-name,
+.stack-title,
+.code-title,
+.scope-title {
   border-bottom: var(--size-border) solid var(--color-border-secondary);
   padding-bottom: var(--size-2);
   margin-bottom: var(--size-2);
@@ -114,8 +128,12 @@ body {
   align-items: center;
 }
 
-.val.val-fn {
+.val-fn {
   font-weight: bold;
+}
+
+.val-bool {
+  color: var(--color-text-bool);
 }
 
 .val-num {
@@ -156,22 +174,14 @@ body {
   font-family: var(--font-mono);
 }
 
-.code,
-.stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-2);
-}
-
 .vmview {
   padding: var(--size-3);
-  display: grid;
+  display: inline-grid;
   grid-template-columns: auto 1fr;
   gap: var(--size-3);
 }
 
 .vm {
-  padding: var(--size-3);
   display: grid;
   grid-template-columns: auto auto;
   gap: var(--size-3);

@@ -37,6 +37,9 @@ export class VM extends Record({ env: Env.withLocal(), stack: new Stack() }) {
   enterAt(key, name, binds) {
     return this.doToEnv((env) => env.enterAt(key, name, binds));
   }
+  leaveAt(key) {
+    return this.doToEnv((env) => env.leaveAt(key));
+  }
 
   bindAt(key, name, value) {
     return this.doToEnv((env) => env.bindAt(key, name, value));
@@ -140,6 +143,31 @@ export class Enter extends EnterAt {
 
   toString() {
     return `Enter(${this.name})`;
+  }
+}
+
+export class LeaveAt extends Instr {
+  constructor(key) {
+    super();
+    this.key = key;
+  }
+
+  exec(vm) {
+    return vm.leaveAt(this.key);
+  }
+
+  toString() {
+    return `LeaveAt(${this.key})`;
+  }
+}
+
+export class Leave extends LeaveAt {
+  constructor() {
+    super(LOCAL);
+  }
+
+  toString() {
+    return `Leave`;
   }
 }
 
@@ -382,6 +410,14 @@ export function enterAt(key, name) {
 
 export function enter(name) {
   return new Enter(name);
+}
+
+export function leaveAt(key) {
+  return new LeaveAt(key);
+}
+
+export function leave() {
+  return new Leave();
 }
 
 export function bindAt(key, name) {

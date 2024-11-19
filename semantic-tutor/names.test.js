@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { Scope, Frame, Env } from "./names.js";
 
 const f = (name, binds) => new Frame(name, binds),
-  s = (...frames) => new Scope(frames),
+  s = (...frames) => new Scope("Scope", frames),
   e = () => Env.withLocal(),
   k1 = "k1",
   v1 = 42,
@@ -26,6 +26,10 @@ test("1 frame Scope.find 404", () => {
 
 test("Scope.find value", () => {
   expect(s().enter().bind(k1, v1).find(k1)).toBe(v1);
+});
+
+test("Scope.leave find value", () => {
+  expect(s().enter().bind(k1, v1).leave().find(k1)).toBe(null);
 });
 
 test("Scope.find value in upper frame", () => {
@@ -84,6 +88,10 @@ test("1 frame Env.find 404", () => {
 
 test("Env.find value", () => {
   expect(e().enter().bind(k1, v1).find(k1)).toBe(v1);
+});
+
+test("Env.leave find value", () => {
+  expect(e().enter().bind(k1, v1).leave().find(k1)).toBe(null);
 });
 
 test("Env.find value in upper frame", () => {
