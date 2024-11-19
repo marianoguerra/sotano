@@ -276,6 +276,7 @@ class VMView {
   constructor() {
     this.vm = new VM().enterAt(LOCAL);
     this.pc = 0;
+    this.history = new Stack();
 
     const k1 = "k1",
       v1 = 42,
@@ -313,11 +314,18 @@ class VMView {
     return div("code", ...instrs);
   }
   next() {
-    this.vm = this.code[this.pc].exec(this.vm);
-    this.pc += 1;
+    if (this.code[this.pc]) {
+      this.history = this.history.push(this.vm);
+      this.vm = this.code[this.pc].exec(this.vm);
+      this.pc += 1;
+    }
   }
   prev() {
-    console.log("prev");
+    if (this.history.size > 0) {
+      this.vm = this.history.first();
+      this.history = this.history.pop();
+      this.pc -= 1;
+    }
   }
 }
 
