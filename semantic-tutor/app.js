@@ -43,6 +43,14 @@ import {
   Lt,
   le,
   Le,
+  And,
+  and,
+  Or,
+  or,
+  Not,
+  not,
+  Neg,
+  neg,
 } from "./namevm.js";
 
 const { div, span, code, button, img } = genTags;
@@ -228,6 +236,18 @@ Lt.prototype.toDOM = function () {
 Le.prototype.toDOM = function () {
   return div("instr instr-le", this.toString());
 };
+And.prototype.toDOM = function () {
+  return div("instr instr-and", this.toString());
+};
+Or.prototype.toDOM = function () {
+  return div("instr instr-or", this.toString());
+};
+Not.prototype.toDOM = function () {
+  return div("instr instr-not", this.toString());
+};
+Neg.prototype.toDOM = function () {
+  return div("instr instr-neg", this.toString());
+};
 
 function rValue(v) {
   switch (typeof v) {
@@ -270,8 +290,12 @@ class VMView {
       nop(),
       push(v1),
       push(v2),
+      neg(),
       add(),
       mul(),
+      push(10),
+      eq(),
+      not(),
       pop(),
     ];
   }

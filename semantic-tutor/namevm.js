@@ -195,6 +195,40 @@ export class Rebind extends RebindAt {
   }
 }
 
+class UnOp extends Instr {
+  exec(vm) {
+    const a = vm.peek();
+    vm = vm.pop();
+    return vm.push(this.applyOp(a));
+  }
+
+  applyOp(_a) {
+    throw new Error("Not Implemented");
+  }
+
+  toString() {
+    return `UnOp`;
+  }
+}
+export class Not extends UnOp {
+  applyOp(a) {
+    return !a;
+  }
+
+  toString() {
+    return `Not`;
+  }
+}
+export class Neg extends UnOp {
+  applyOp(a) {
+    return -a;
+  }
+
+  toString() {
+    return `Neg`;
+  }
+}
+
 class BinOp extends Instr {
   exec(vm) {
     const a = vm.peek();
@@ -204,7 +238,7 @@ class BinOp extends Instr {
     return vm.push(this.applyOp(a, b));
   }
 
-  applyOp(a, _b) {
+  applyOp(_a, _b) {
     throw new Error("Not Implemented");
   }
 
@@ -303,6 +337,24 @@ export class Le extends BinOp {
     return `Le`;
   }
 }
+export class And extends BinOp {
+  applyOp(a, b) {
+    return a && b;
+  }
+
+  toString() {
+    return `And`;
+  }
+}
+export class Or extends BinOp {
+  applyOp(a, b) {
+    return a || b;
+  }
+
+  toString() {
+    return `Or`;
+  }
+}
 
 export function nop() {
   return new Nop();
@@ -377,4 +429,18 @@ export function lt() {
 }
 export function le() {
   return new Le();
+}
+
+export function and() {
+  return new And();
+}
+export function or() {
+  return new Or();
+}
+
+export function not() {
+  return new Not();
+}
+export function neg() {
+  return new Neg();
 }
