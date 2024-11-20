@@ -1,4 +1,5 @@
 import { Stack } from "./immutable.js";
+import * as monaco from "./deps/monaco-editor.js";
 
 import { genTags, patch } from "./dom.js";
 import { LOCAL } from "./names.js";
@@ -99,6 +100,53 @@ function main() {
   document.body.addEventListener("keyup", handleKey);
 
   render(root.toDOM());
+
+  const editorNode = document.querySelector("#editor"),
+    initialCode = [
+      "function helloWorld() {",
+      '\tconsole.log("Hello, world!");',
+      "}",
+      "helloWorld();",
+    ].join("\n"),
+    editor = monaco.editor.create(editorNode, {
+      value: initialCode,
+      language: "javascript",
+      theme: "vs-dark",
+    });
+
+  setTimeout(() => {
+    highlightLine(editor, 1);
+    highlightSpan(editor, 2, 2, 2, 22);
+  }, 1000);
+}
+
+function highlightLine(editor, lineNumber) {
+  editor.deltaDecorations(
+    [],
+    [
+      {
+        range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+        options: {
+          isWholeLine: true,
+          className: "highlightLine",
+        },
+      },
+    ],
+  );
+}
+
+function highlightSpan(editor, startLine, startChar, endLine, endChar) {
+  editor.deltaDecorations(
+    [],
+    [
+      {
+        range: new monaco.Range(startLine, startChar, endLine, endChar),
+        options: {
+          inlineClassName: "highlightSpan",
+        },
+      },
+    ],
+  );
 }
 
 Frame.prototype.toDOM = function () {

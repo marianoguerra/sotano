@@ -1,0 +1,14 @@
+
+fetch-deps:
+    rm -rf deps
+    mkdir -p deps/monaco-editor/basic-languages/javascript
+    mkdir -p deps/monaco-editor/language/typescript
+    wget https://microsoft.github.io/vscode-codicons/dist/codicon.ttf
+    wget https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/esm/vs/basic-languages/javascript/javascript.js/+esm -O deps/monaco-editor/basic-languages/javascript/javascript.js
+    wget https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/esm/vs/language/typescript/tsMode.js/+esm -O deps/monaco-editor/language/typescript/tsMode.js
+    wget https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/+esm -O deps/monaco-editor.js
+    sed -i 's|/npm/monaco-editor@0\.52\.0/esm/vs/basic-languages/javascript/javascript\.js/+esm|./monaco-editor/basic-languages/javascript/javascript.js|g' deps/monaco-editor.js
+    sed -i 's|/npm/monaco-editor@0\.52\.0/esm/vs/language/typescript/tsMode\.js/+esm|./monaco-editor/language/typescript/tsMode.js|g' deps/monaco-editor.js
+
+
+
