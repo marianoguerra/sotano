@@ -180,20 +180,37 @@ Scope.prototype.toDOM = function () {
   return div("scope", span("scope-title", this.name), ...items);
 };
 
-Env.prototype.toDOM = function () {
-  const len = this.scopes.size,
-    items = new Array(len);
+Object.assign(Env.prototype, {
+  toDOM() {
+    return div("env", this.scopesToDOM(), this.stacksToDOM());
+  },
+  scopesToDOM() {
+    const len = this.scopes.size,
+      items = new Array(len);
 
-  let i = 0;
-  for (const [_key, val] of this.scopes) {
-    items[i] = val.toDOM();
-    i += 1;
-  }
+    let i = 0;
+    for (const [_key, val] of this.scopes) {
+      items[i] = val.toDOM();
+      i += 1;
+    }
 
-  return div("env", ...items);
-};
+    return div("scopes", ...items);
+  },
+  stacksToDOM() {
+    const len = this.stacks.size,
+      items = new Array(len);
 
-Stack.prototype.toDOM = function () {
+    let i = 0;
+    for (const [key, val] of this.stacks) {
+      items[i] = val.toDOM(key);
+      i += 1;
+    }
+
+    return div("stacks", ...items);
+  },
+});
+
+Stack.prototype.toDOM = function (title = "Stack") {
   const len = this.size,
     items = new Array(len);
 
@@ -201,11 +218,11 @@ Stack.prototype.toDOM = function () {
     items[i] = rValue(this.get(i));
   }
 
-  return div("stack", span("stack-title", "Stack"), ...items);
+  return div("stack", span("stack-title", title), ...items);
 };
 
 VM.prototype.toDOM = function () {
-  return div("vm", this.env.toDOM(), this.stack.toDOM());
+  return div("vm", this.env.toDOM());
 };
 
 Nop.prototype.toDOM = function () {

@@ -74,21 +74,22 @@ export class Scope extends Record({ name: "Scope", frames: Stack() }) {
 
 export const LOCAL = "local";
 
-export class Env extends Record({ current: LOCAL, scopes: new OMap() }) {
-  constructor() {
-    super();
+export const DATA = "data";
+
+export class Env extends Record({
+  curScopeKey: LOCAL,
+  curStackKey: DATA,
+  scopes: new OMap(),
+  stacks: new OMap(),
+}) {
+  // scope
+
+  addLocalScope(fn) {
+    return this.addScope(LOCAL, fn);
   }
 
-  static withLocal(fn) {
-    return new Env().addScope(LOCAL, fn);
-  }
-
-  get local() {
-    return this.scopes.get(LOCAL, null);
-  }
-
-  setCurrent(v) {
-    return this.set("current", v);
+  setCurScopeKey(v) {
+    return this.set("curScopeKey", v);
   }
 
   addScope(key, fn) {
@@ -97,23 +98,23 @@ export class Env extends Record({ current: LOCAL, scopes: new OMap() }) {
   }
 
   enter(name, binds) {
-    return this.enterAt(this.current, name, binds);
+    return this.enterAt(this.curScopeKey, name, binds);
   }
 
   leave() {
-    return this.leaveAt(this.current);
+    return this.leaveAt(this.curScopeKey);
   }
 
   bind(name, value) {
-    return this.bindAt(this.current, name, value);
+    return this.bindAt(this.curScopeKey, name, value);
   }
 
   rebind(name, value) {
-    return this.rebindAt(this.current, name, value);
+    return this.rebindAt(this.curScopeKey, name, value);
   }
 
   find(name, dval = null) {
-    return this.findAt(this.current, name, dval);
+    return this.findAt(this.curScopeKey, name, dval);
   }
 
   doTo(key, fn) {
@@ -141,5 +142,49 @@ export class Env extends Record({ current: LOCAL, scopes: new OMap() }) {
 
   findAt(key, name, dval = null) {
     return this.scopes.get(key).find(name, dval);
+  }
+
+  // stack
+
+  addDataStack(fn) {
+    return this.addStack(DATA, fn);
+  }
+
+  addStack(key, fn) {
+    const stack = new Stack();
+    return this.setIn(["stacks", key], fn ? fn(stack) : stack);
+  }
+
+  setCurScopeKey(key) {
+    return this.set("curStackKey", key);
+  }
+
+  doToStack(key, fn) {
+    return this.set("stacks", this.stacks.update(key, fn));
+  }
+
+  push(value) {
+    return this.pushAt(this.curStackKey, value);
+  }
+
+  pop() {
+    return this.popAt(this.curStackKey);
+  }
+
+  peek(dval = null) {
+    return this.peekAt(this.curStackKey, dval);
+  }
+
+  pushAt(key, value) {
+    return this.doToStack(key, (s) => s.push(value));
+  }
+
+  popAt(key) {
+    return this.doToStack(key, (s) => s.pop());
+  }
+
+  peekAt(key, dval = null) {
+    const stack = this.stacks.get(key);
+    return stack.size > 0 ? stack.peek() : dval;
   }
 }

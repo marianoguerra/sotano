@@ -1,21 +1,35 @@
 import { Env, LOCAL, NOT_SET } from "./names.js";
-import { Stack, Record } from "./immutable.js";
+import { Record } from "./immutable.js";
 
-export class VM extends Record({ env: Env.withLocal(), stack: new Stack() }) {
-  constructor() {
-    super();
+export class VM extends Record({
+  env: new Env().addLocalScope().addDataStack(),
+}) {
+  setCurrentStack(key) {
+    return this.doToEnv((env) => env.setCurStackKey(key));
   }
 
   peek() {
-    return this.stack.first();
+    return this.env.peek();
   }
 
   pop() {
-    return this.set("stack", this.stack.rest());
+    return this.doToEnv((env) => env.pop());
   }
 
-  push(v) {
-    return this.set("stack", this.stack.push(v));
+  push(value) {
+    return this.doToEnv((env) => env.push(value));
+  }
+
+  peekAt(key) {
+    return this.env.peek(key);
+  }
+
+  popAt(key) {
+    return this.doToEnv((env) => env.popAt(key));
+  }
+
+  pushAt(key, value) {
+    return this.doToEnv((env) => env.pushAt(key, value));
   }
 
   doToEnv(fn) {
@@ -43,8 +57,8 @@ export class VM extends Record({ env: Env.withLocal(), stack: new Stack() }) {
     return this.doToEnv((env) => env.leaveAt(key));
   }
 
-  setCurrent(key) {
-    return this.doToEnv((env) => env.setCurrent(key));
+  setCurrentScope(key) {
+    return this.doToEnv((env) => env.setCurScopeKey(key));
   }
 
   bindAt(key, name, value) {
@@ -68,6 +82,21 @@ class Instr {
 export class Nop extends Instr {
   toString() {
     return "Nop";
+  }
+}
+
+export class SetCurrentStack extends Instr {
+  constructor(key) {
+    super();
+    this.key = key;
+  }
+
+  exec(vm) {
+    return vm.setCurrentStack(this.key);
+  }
+
+  toString() {
+    return `SetCurrentStack(${this.key})`;
   }
 }
 
@@ -177,18 +206,18 @@ export class Leave extends LeaveAt {
   }
 }
 
-export class SetCurrent extends Instr {
+export class SetCurrentScope extends Instr {
   constructor(key) {
     super();
     this.key = key;
   }
 
   exec(vm) {
-    return vm.setCurrent(this.key);
+    return vm.setCurrentScope(this.key);
   }
 
   toString() {
-    return `SetCurrent(${this.key})`;
+    return `SetCurrentScope(${this.key})`;
   }
 }
 
@@ -409,6 +438,10 @@ export function nop() {
   return new Nop();
 }
 
+export function setCurrentStack(key) {
+  return new SetCurrentStack(key);
+}
+
 export function push(value) {
   return new Push(value);
 }
@@ -441,8 +474,8 @@ export function leave() {
   return new Leave();
 }
 
-export function setCurrent(key) {
-  return new SetCurrent(key);
+export function setCurrentScope(key) {
+  return new SetCurrentScope(key);
 }
 
 export function bindAt(key, name) {

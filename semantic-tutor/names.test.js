@@ -3,7 +3,7 @@ import { Scope, Frame, Env } from "./names.js";
 
 const f = (name, binds) => new Frame(name, binds),
   s = (...frames) => new Scope("Scope", frames),
-  e = () => Env.withLocal(),
+  e = () => new Env().addLocalScope().addDataStack(),
   k1 = "k1",
   v1 = 42,
   v2 = 123;
@@ -136,4 +136,17 @@ test("Env.rebind in upper frame works", () => {
   expect(found).toBe(true);
   expect(e1).not.toEqual(env);
   expect(env.find(k1)).toBe(v2);
+});
+
+test("Env.push peek", () => {
+  expect(e().push(v1).peek()).toBe(v1);
+});
+
+test("Env.peek empty", () => {
+  expect(e().peek()).toBe(null);
+  expect(e().peek(v1)).toBe(v1);
+});
+
+test("Env.push pop peek", () => {
+  expect(e().push(v1).pop().peek()).toBe(null);
 });
