@@ -1,10 +1,36 @@
-import { Record, OrderedMap as OMap, Stack } from "./immutable.js";
+import { Record, OrderedMap as OMap, Stack, List } from "./immutable.js";
 
 export const NOT_SET = {};
 
-export class Frame extends Record({ name: "<frame>", binds: OMap() }) {
+export class FrameMeta extends Record({
+  title: null,
+  notes: List(),
+  binds: OMap(),
+}) {
+  setTitle(v) {
+    return this.set("title", v);
+  }
+
+  addNote(v) {
+    return this.set("notes", this.notes.push(v));
+  }
+
+  bind(key, value) {
+    return this.setIn(["binds", key], value);
+  }
+}
+
+export class Frame extends Record({
+  name: "<frame>",
+  binds: OMap(),
+  meta: new FrameMeta(),
+}) {
   constructor(name, binds) {
     super({ name, binds: OMap(binds) });
+  }
+
+  get title() {
+    return this.meta.title ?? this.name;
   }
 
   bind(name, value) {
@@ -17,6 +43,22 @@ export class Frame extends Record({ name: "<frame>", binds: OMap() }) {
 
   find(name, dval = null) {
     return this.binds.get(name, dval);
+  }
+
+  doToMeta(fn) {
+    return this.set("meta", fn(this.meta));
+  }
+
+  setTitle(v) {
+    return this.doToMeta((m) => m.setTitle(v));
+  }
+
+  addNote(v) {
+    return this.doToMeta((m) => m.addNote(v));
+  }
+
+  bindMeta(key, value) {
+    return this.doToMeta((m) => m.bind(key, value));
   }
 }
 
@@ -40,10 +82,14 @@ export class Scope extends Record({ name: "Scope", frames: Stack() }) {
     return this.update("frames", (f) => f.pop());
   }
 
-  bind(name, value) {
+  updateFirstFrame(fn) {
     const h = this.frames.first(),
       t = this.frames.rest();
-    return this.withFrames(t.push(h.bind(name, value)));
+    return this.withFrames(t.push(fn(h)));
+  }
+
+  bind(name, value) {
+    return this.updateFirstFrame((h) => h.bind(name, value));
   }
 
   rebind(name, value) {
@@ -70,6 +116,22 @@ export class Scope extends Record({ name: "Scope", frames: Stack() }) {
 
     return dval;
   }
+
+  doToMeta(fn) {
+    return this.updateFirstFrame((h) => fn(h));
+  }
+
+  setTitle(v) {
+    return this.doToMeta((m) => m.setTitle(v));
+  }
+
+  addNote(v) {
+    return this.doToMeta((m) => m.addNote(v));
+  }
+
+  bindMeta(key, value) {
+    return this.doToMeta((m) => m.bind(key, value));
+  }
 }
 
 export const LOCAL = "local";
@@ -90,6 +152,10 @@ export class Env extends Record({
 
   setCurScopeKey(v) {
     return this.set("curScopeKey", v);
+  }
+
+  get currentScope() {
+    return this.scopes.get(this.curScopeKey);
   }
 
   addScope(key, fn) {
@@ -142,6 +208,32 @@ export class Env extends Record({
 
   findAt(key, name, dval = null) {
     return this.scopes.get(key).find(name, dval);
+  }
+
+  // scope meta
+
+  setTitle(v) {
+    return this.setTitleAt(this.curScopeKey, v);
+  }
+
+  addNote(v) {
+    return this.addNoteAt(this.curScopeKey, v);
+  }
+
+  bindMeta(key, value) {
+    return this.bindMetaAt(this.curScopeKey, key, value);
+  }
+
+  setTitleAt(key, v) {
+    return this.doTo(key, (m) => m.setTitle(v));
+  }
+
+  addNoteAt(key, v) {
+    return this.doTo(key, (m) => m.addNote(v));
+  }
+
+  bindMetaAt(key, metaKey, value) {
+    return this.doTo(key, (m) => m.bindMeta(metaKey, value));
   }
 
   // stack

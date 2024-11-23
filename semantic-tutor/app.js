@@ -56,6 +56,10 @@ import {
   not,
   Neg,
   neg,
+  SetFrameTitle,
+  setFrameTitle,
+  AddFrameNote,
+  addFrameNote,
 } from "./namevm.js";
 
 const { div, span, code, button, img } = genTags;
@@ -160,7 +164,12 @@ Frame.prototype.toDOM = function () {
     i += 2;
   }
 
-  return div("frame", span("frame-name", this.name), div("binds", ...items));
+  return div(
+    "frame",
+    span("frame-name", this.title),
+    div("frame-meta", ...this.meta.notes.map((n) => span("frame-note", n))),
+    div("binds", ...items),
+  );
 };
 
 Scope.prototype.toDOM = function () {
@@ -305,6 +314,8 @@ instrDOMToStr(And, "and");
 instrDOMToStr(Or, "or");
 instrDOMToStr(Not, "not");
 instrDOMToStr(Neg, "neg");
+instrDOMToStr(SetFrameTitle, "set-title");
+instrDOMToStr(AddFrameNote, "add-note");
 
 function rValue(v) {
   switch (typeof v) {
@@ -339,6 +350,12 @@ class VMView {
       v1 = 42,
       v2 = 123;
     this.code = [
+      push("My Title"),
+      setFrameTitle(),
+      push("Note 1"),
+      addFrameNote(),
+      push("Note 2"),
+      addFrameNote(),
       push(v1),
       bind(k1),
       enter("myscope"),

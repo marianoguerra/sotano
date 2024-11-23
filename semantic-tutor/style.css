@@ -53,6 +53,19 @@ body {
   font-style: italic;
 }
 
+.frame-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-1);
+  padding-bottom: var(--size-2);
+  margin-bottom: var(--size-2);
+  border-bottom: var(--size-border) solid var(--color-border-secondary);
+}
+
+.frame-meta:empty {
+  display: none;
+}
+
 .env {
   display: inline-flex;
   justify-content: flex-start;

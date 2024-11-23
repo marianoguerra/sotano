@@ -6,7 +6,8 @@ const f = (name, binds) => new Frame(name, binds),
   e = () => new Env().addLocalScope().addDataStack(),
   k1 = "k1",
   v1 = 42,
-  v2 = 123;
+  v2 = 123,
+  t1 = "Title 1";
 
 test("Frame.find 404", () => {
   expect(f().find(k1)).toBe(null);
@@ -14,6 +15,10 @@ test("Frame.find 404", () => {
 
 test("Frame.find 404 with default value", () => {
   expect(f().find(k1, v1)).toBe(v1);
+});
+
+test("Frame.setTitle", () => {
+  expect(f().setTitle(t1).meta.title).toBe(t1);
 });
 
 test("Empty Scope.find 404", () => {
@@ -74,6 +79,10 @@ test("Scope.rebind in upper frame works", () => {
   expect(found).toBe(true);
   expect(s1).not.toEqual(scope);
   expect(scope.find(k1)).toBe(v2);
+});
+
+test("Scope.setTitle", () => {
+  expect(s().enter().setTitle(t1).frames.first().meta.title).toBe(t1);
 });
 
 //
@@ -149,4 +158,10 @@ test("Env.peek empty", () => {
 
 test("Env.push pop peek", () => {
   expect(e().push(v1).pop().peek()).toBe(null);
+});
+
+test("Env.setTitle", () => {
+  expect(e().enter().setTitle(t1).currentScope.frames.first().meta.title).toBe(
+    t1,
+  );
 });

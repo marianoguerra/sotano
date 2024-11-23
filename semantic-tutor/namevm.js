@@ -71,6 +71,14 @@ export class VM extends Record({
       return env;
     });
   }
+
+  setTitle(v) {
+    return this.doToEnv((env) => env.setTitle(v));
+  }
+
+  addNote(v) {
+    return this.doToEnv((env) => env.addNote(v));
+  }
 }
 
 class Instr {
@@ -307,6 +315,39 @@ export class Neg extends UnOp {
   }
 }
 
+class UnVmOp extends Instr {
+  exec(vm) {
+    const a = vm.peek();
+    return this.applyOp(vm.pop(), a);
+  }
+
+  applyOp(_vm, _a) {
+    throw new Error("Not Implemented");
+  }
+
+  toString() {
+    return `UnVmOp`;
+  }
+}
+export class SetFrameTitle extends UnVmOp {
+  applyOp(vm, a) {
+    return vm.setTitle(a);
+  }
+
+  toString() {
+    return `SetFrameTitle`;
+  }
+}
+export class AddFrameNote extends UnVmOp {
+  applyOp(vm, a) {
+    return vm.addNote(a);
+  }
+
+  toString() {
+    return `AddFrameNote`;
+  }
+}
+
 class BinOp extends Instr {
   exec(vm) {
     const a = vm.peek();
@@ -537,4 +578,12 @@ export function not() {
 }
 export function neg() {
   return new Neg();
+}
+
+export function setFrameTitle() {
+  return new SetFrameTitle();
+}
+
+export function addFrameNote() {
+  return new AddFrameNote();
 }
