@@ -285,48 +285,26 @@ Rebind.prototype.toDOM = function () {
   );
 };
 
-Add.prototype.toDOM = function () {
-  return div("instr instr-add", this.toString());
-};
-Sub.prototype.toDOM = function () {
-  return div("instr instr-sub", this.toString());
-};
-Mul.prototype.toDOM = function () {
-  return div("instr instr-mul", this.toString());
-};
-Div.prototype.toDOM = function () {
-  return div("instr instr-div", this.toString());
-};
-Eq.prototype.toDOM = function () {
-  return div("instr instr-eq", this.toString());
-};
-NotEq.prototype.toDOM = function () {
-  return div("instr instr-ne", this.toString());
-};
-Gt.prototype.toDOM = function () {
-  return div("instr instr-gt", this.toString());
-};
-Ge.prototype.toDOM = function () {
-  return div("instr instr-ge", this.toString());
-};
-Lt.prototype.toDOM = function () {
-  return div("instr instr-lt", this.toString());
-};
-Le.prototype.toDOM = function () {
-  return div("instr instr-le", this.toString());
-};
-And.prototype.toDOM = function () {
-  return div("instr instr-and", this.toString());
-};
-Or.prototype.toDOM = function () {
-  return div("instr instr-or", this.toString());
-};
-Not.prototype.toDOM = function () {
-  return div("instr instr-not", this.toString());
-};
-Neg.prototype.toDOM = function () {
-  return div("instr instr-neg", this.toString());
-};
+function instrDOMToStr(Cls, key) {
+  Cls.prototype.toDOM = function () {
+    return div(`instr instr-${key}`, this.toString());
+  };
+}
+
+instrDOMToStr(Add, "add");
+instrDOMToStr(Sub, "sub");
+instrDOMToStr(Mul, "mul");
+instrDOMToStr(Div, "div");
+instrDOMToStr(Eq, "eq");
+instrDOMToStr(NotEq, "ne");
+instrDOMToStr(Gt, "gt");
+instrDOMToStr(Ge, "ge");
+instrDOMToStr(Lt, "lt");
+instrDOMToStr(Le, "le");
+instrDOMToStr(And, "and");
+instrDOMToStr(Or, "or");
+instrDOMToStr(Not, "not");
+instrDOMToStr(Neg, "neg");
 
 function rValue(v) {
   switch (typeof v) {
