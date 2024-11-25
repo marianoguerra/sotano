@@ -2,6 +2,9 @@
 
 ## Explore
 
+- mixins
+  - import * from x
+- OO instance is bind and not rebind
 - macros
 - call/cc
 
