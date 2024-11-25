@@ -1,5 +1,6 @@
+/* globals monaco */
 import { Stack } from "./immutable.js";
-import * as monaco from "./deps/monaco-editor.js";
+//import * as monaco from "./deps/monaco-editor.js";
 
 import { genTags, patch } from "./dom.js";
 import { LOCAL } from "./names.js";
@@ -30,28 +31,19 @@ import {
   Rebind,
   add,
   Add,
-  sub,
   Sub,
   mul,
   Mul,
-  div as div_,
   Div,
   eq,
   Eq,
-  notEq,
   NotEq,
-  gt,
   Gt,
-  ge,
   Ge,
-  lt,
   Lt,
-  le,
   Le,
   And,
-  and,
   Or,
-  or,
   Not,
   not,
   Neg,
@@ -62,7 +54,7 @@ import {
   addFrameNote,
 } from "./namevm.js";
 
-const { div, span, code, button, img } = genTags;
+const { div, span } = genTags;
 
 function main() {
   const rootNode = document.getElementById("app"),
@@ -71,7 +63,7 @@ function main() {
   const root = new VMView();
 
   function handleClick(e) {
-    const { action } = e.target?.dataset;
+    const { action } = e.target?.dataset ?? {};
 
     if (action === undefined) {
       return;
@@ -104,7 +96,10 @@ function main() {
   document.body.addEventListener("keyup", handleKey);
 
   render(root.toDOM());
+}
 
+// eslint-disable-next-line no-unused-vars
+function setupMonaco() {
   const editorNode = document.querySelector("#editor"),
     initialCode = [
       "function helloWorld() {",
@@ -296,7 +291,7 @@ Rebind.prototype.toDOM = function () {
 
 function instrDOMToStr(Cls, key) {
   Cls.prototype.toDOM = function () {
-    return div(`instr instr-${key}`, this.toString());
+    return div(`instr instr-${key}`, span("op-name", this.toString()));
   };
 }
 
