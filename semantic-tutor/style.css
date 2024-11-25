@@ -30,7 +30,7 @@
     --size-5: 1.5rem;
     --size-6: 2rem;
 
-    --border-radius: 3px;
+    --border-radius: 2px;
 }
 
 html,
@@ -80,7 +80,7 @@ body {
 
 .stacks,
 .scopes {
-    padding: var(--size-2) var(--size-3);
+    padding: var(--size-3);
     border: var(--size-border) dashed var(--color-border-secondary);
     border-radius: var(--border-radius);
     display: flex;
@@ -144,12 +144,12 @@ body {
 
 .bind-val {
     justify-content: flex-end;
-    font-family: var(--font-mono);
 }
 
 .val {
     display: inline-flex;
     align-items: center;
+    font-family: var(--font-mono);
 }
 
 .val-fn {
@@ -182,7 +182,7 @@ body {
 
 .instr {
     display: flex;
-    gap: var(--size-1);
+    gap: var(--size-3);
     padding: var(--size-1);
     align-items: center;
 }
