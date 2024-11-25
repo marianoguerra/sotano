@@ -1,201 +1,211 @@
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 :root {
-  --font-mono: "Fira Code", "Source Code Pro", "Courier New", Courier, monospace;
-  --font-sans: "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    --font-mono: "Fira Code", "Source Code Pro", "Courier New", Courier,
+        monospace;
+    --font-sans: "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
-  --color-text: #0F172A;
-  --color-text-reverse: #F8FAFC;
-  --color-text-number: #0C4A6E;
-  --color-text-string: #353835;
-  --color-text-bool: #134E4A;
-  --color-quotes: #505350;
+    --color-text: #0f172a;
+    --color-text-reverse: #f8fafc;
+    --color-text-number: #0c4a6e;
+    --color-text-string: #353835;
+    --color-text-bool: #134e4a;
+    --color-quotes: #505350;
 
-  --color-bg: #F8FAFC;
-  --color-bg-reverse: #020617;
+    --color-bg: #f8fafc;
+    --color-bg-reverse: #020617;
 
-  --color-border: #334155;
-  --color-border-secondary: #94A3B8;
+    --color-border: #334155;
+    --color-border-secondary: #94a3b8;
 
-  --size-border: 1px;
-  --size-1: .25rem;
-  --size-2: .5rem;
-  --size-3: .75rem;
-  --size-4: 1rem;
-  --size-5: 1.5rem;
-  --size-6: 2rem;
+    --size-border: 1px;
+    --size-1: 0.25rem;
+    --size-2: 0.5rem;
+    --size-3: 0.75rem;
+    --size-4: 1rem;
+    --size-5: 1.5rem;
+    --size-6: 2rem;
 
-  --border-radius: 3px;
+    --border-radius: 3px;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-  color: var(--color-text);
-  background-color: var(--color-bg);
+    color: var(--color-text);
+    background-color: var(--color-bg);
 }
 
 .frame-link,
 .frame-name {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .frame-name {
-  font-style: italic;
+    font-style: italic;
 }
 
 .frame-meta {
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-1);
-  padding-bottom: var(--size-2);
-  margin-bottom: var(--size-2);
-  border-bottom: var(--size-border) solid var(--color-border-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-1);
+    padding-bottom: var(--size-2);
+    margin-bottom: var(--size-2);
+    border-bottom: var(--size-border) solid var(--color-border-secondary);
 }
 
 .frame-meta:empty {
-  display: none;
+    display: none;
 }
 
 .env {
-  display: inline-flex;
-  justify-content: flex-start;
-  gap: var(--size-3);
+    display: inline-flex;
+    justify-content: flex-start;
+    gap: var(--size-3);
 }
 
-.env>* {
-  flex: 1;
-  min-width: 16em;
+.env > * {
+    flex: 1;
+    min-width: 16em;
+}
+
+.stacks,
+.scopes {
+    padding: var(--size-2) var(--size-3);
+    border: var(--size-border) dashed var(--color-border-secondary);
+    border-radius: var(--border-radius);
+    display: flex;
+    gap: var(--size-3);
 }
 
 .scope,
 .stack,
 .code {
-  padding: var(--size-2) var(--size-3);
-  border: var(--size-border) solid var(--color-border-secondary);
-  border-radius: var(--border-radius);
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-1);
+    padding: var(--size-2) var(--size-3);
+    border: var(--size-border) solid var(--color-border-secondary);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: var(--size-1);
+    flex: 1;
 }
 
 .stack {
-  min-width: 8em;
-  align-items: center;
-  gap: var(--size-3);
+    min-width: 8em;
+    align-items: center;
+    gap: var(--size-3);
 }
 
 .frame {
-  display: inline-grid;
-  padding: var(--size-2) var(--size-3);
-  border: var(--size-border) solid var(--color-border);
-  border-radius: var(--border-radius);
-  grid-template-rows: auto auto 1fr;
-  gap: var(--size-1);
+    display: inline-grid;
+    padding: var(--size-2) var(--size-3);
+    border: var(--size-border) solid var(--color-border);
+    border-radius: var(--border-radius);
+    grid-template-rows: auto auto 1fr;
+    gap: var(--size-1);
 }
 
 .binds {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  justify-content: space-between;
-  gap: var(--size-2);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
+    gap: var(--size-2);
 }
 
 .frame-name,
 .stack-title,
 .code-title,
 .scope-title {
-  border-bottom: var(--size-border) solid var(--color-border-secondary);
-  padding-bottom: var(--size-2);
-  margin-bottom: var(--size-2);
-  text-align: center;
-  font-weight: bold;
+    border-bottom: var(--size-border) solid var(--color-border-secondary);
+    padding-bottom: var(--size-2);
+    margin-bottom: var(--size-2);
+    text-align: center;
+    font-weight: bold;
 }
 
 .bind-key,
 .bind-val {
-  display: inline-flex;
-  align-items: center;
+    display: inline-flex;
+    align-items: center;
 }
 
 .bind-key {
-  font-family: var(--font-mono);
+    font-family: var(--font-mono);
 }
 
 .bind-val {
-  justify-content: flex-end;
-  font-family: var(--font-mono);
+    justify-content: flex-end;
+    font-family: var(--font-mono);
 }
 
 .val {
-  display: inline-flex;
-  align-items: center;
+    display: inline-flex;
+    align-items: center;
 }
 
 .val-fn {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .val-bool {
-  color: var(--color-text-bool);
+    color: var(--color-text-bool);
 }
 
 .val-num {
-  color: var(--color-text-number);
+    color: var(--color-text-number);
 }
 
 .val-str {
-  quotes: "❝" "❞";
-  font-family: var(--font-mono);
-  color: var(--color-text-string);
+    quotes: "❝" "❞";
+    font-family: var(--font-mono);
+    color: var(--color-text-string);
 }
 
 .val-str:before {
-  content: open-quote;
-  color: var(--color-quotes);
+    content: open-quote;
+    color: var(--color-quotes);
 }
 
 .val-str:after {
-  content: close-quote;
-  color: var(--color-quotes);
+    content: close-quote;
+    color: var(--color-quotes);
 }
 
 .instr {
-  display: flex;
-  gap: var(--size-1);
-  padding: var(--size-1);
-  align-items: center;
+    display: flex;
+    gap: var(--size-1);
+    padding: var(--size-1);
+    align-items: center;
 }
 
-
 .instr-box.active {
-  outline: var(--size-border) solid var(--color-border);
+    outline: var(--size-border) solid var(--color-border);
 }
 
 .op-name {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--font-mono);
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
 }
 
 .vmview {
-  padding: var(--size-3);
-  display: inline-grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--size-3);
+    padding: var(--size-3);
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--size-3);
 }
 
 .vm {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: var(--size-3);
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: var(--size-3);
 }
