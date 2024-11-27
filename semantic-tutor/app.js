@@ -1,6 +1,5 @@
-/* globals monaco */
 import { Stack } from "./immutable.js";
-//import * as monaco from "./deps/monaco-editor.js";
+import * as monaco from "./deps/monaco-editor.js";
 
 import { genTags, patch } from "./dom.js";
 import { LOCAL } from "./names.js";
@@ -52,6 +51,8 @@ import {
   setFrameTitle,
   AddFrameNote,
   addFrameNote,
+  SetProp,
+  setProp,
 } from "./namevm.js";
 
 const { div, span } = genTags;
@@ -77,7 +78,9 @@ function main() {
     render(root.toDOM());
   }
 
+  let decoration;
   function handleKey(e) {
+    const curEnv = root.vm.env;
     switch (e.key) {
       case "ArrowLeft":
         root.prev();
@@ -90,12 +93,27 @@ function main() {
     }
 
     render(root.toDOM());
+
+    const newEnv = root.vm.env;
+    if (curEnv.props !== newEnv.props) {
+      const newLine = newEnv.getProp("l");
+
+      if (newLine && curEnv.getProp("l") !== newLine) {
+        const line = parseInt(newLine, 10);
+        console.log("set line!", newLine);
+        if (decoration) {
+          decoration.clear();
+        }
+        decoration = highlightLine(editor, line);
+      }
+    }
   }
 
   rootNode.addEventListener("click", handleClick);
   document.body.addEventListener("keyup", handleKey);
 
   render(root.toDOM());
+  const editor = setupMonaco();
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -113,25 +131,24 @@ function setupMonaco() {
       theme: "vs-dark",
     });
 
-  setTimeout(() => {
-    highlightLine(editor, 1);
-    highlightSpan(editor, 2, 2, 2, 22);
-  }, 1000);
+  // setTimeout(() => {
+  //   highlightLine(editor, 1);
+  //   highlightSpan(editor, 2, 2, 2, 22);
+  // }, 1000);
+
+  return editor;
 }
 
-function highlightLine(editor, lineNumber) {
-  editor.deltaDecorations(
-    [],
-    [
-      {
-        range: new monaco.Range(lineNumber, 1, lineNumber, 1),
-        options: {
-          isWholeLine: true,
-          className: "highlightLine",
-        },
-      },
-    ],
-  );
+function removeHighlightLine(editor, lineNumber) {}
+function highlightLine(editor, line) {
+  const decoration = {
+    range: new monaco.Range(line, 1, line, 1),
+    options: {
+      isWholeLine: true,
+      className: "highlightLine",
+    },
+  };
+  return editor.createDecorationsCollection([decoration]);
 }
 
 function highlightSpan(editor, startLine, startChar, endLine, endChar) {
@@ -312,6 +329,15 @@ instrDOMToStr(Neg, "neg");
 instrDOMToStr(SetFrameTitle, "set-title");
 instrDOMToStr(AddFrameNote, "add-note");
 
+SetProp.prototype.toDOM = function () {
+  return div(
+    `instr instr-set-prop`,
+    span("op-name", "SetProp"),
+    rValue(this.key),
+    rValue(this.value),
+  );
+};
+
 function rValue(v) {
   switch (typeof v) {
     case "string":
@@ -356,6 +382,7 @@ class VMView {
       enter("myscope"),
       push(v2),
       rebind(k1),
+      setProp("l", "1"),
       find(k1),
       nop(),
       push(v1),
@@ -364,9 +391,11 @@ class VMView {
       add(),
       mul(),
       push(10),
+      setProp("l", "2"),
       eq(),
       not(),
       pop(),
+      setProp("l", "3"),
       leave(),
       leaveAt(LOCAL),
     ];

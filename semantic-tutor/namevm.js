@@ -79,6 +79,10 @@ export class VM extends Record({
   addNote(v) {
     return this.doToEnv((env) => env.addNote(v));
   }
+
+  setProp(k, v) {
+    return this.doToEnv((env) => env.setProp(k, v));
+  }
 }
 
 class Instr {
@@ -475,6 +479,22 @@ export class Or extends BinOp {
   }
 }
 
+export class SetProp extends Instr {
+  constructor(key, value) {
+    super();
+    this.key = key;
+    this.value = value;
+  }
+
+  exec(vm) {
+    return vm.setProp(this.key, this.value);
+  }
+
+  toString() {
+    return `SetProp(${this.key}, ${this.value})`;
+  }
+}
+
 export function nop() {
   return new Nop();
 }
@@ -586,4 +606,8 @@ export function setFrameTitle() {
 
 export function addFrameNote() {
   return new AddFrameNote();
+}
+
+export function setProp(k, v) {
+  return new SetProp(k, v);
 }

@@ -1,4 +1,10 @@
-import { Record, OrderedMap as OMap, Stack, List } from "./immutable.js";
+import {
+  Record,
+  OrderedMap as OMap,
+  Map as IMap,
+  Stack,
+  List,
+} from "./immutable.js";
 
 export const NOT_SET = {};
 
@@ -143,6 +149,7 @@ export class Env extends Record({
   curStackKey: DATA,
   scopes: new OMap(),
   stacks: new OMap(),
+  props: new IMap(),
 }) {
   // scope
 
@@ -247,7 +254,7 @@ export class Env extends Record({
     return this.setIn(["stacks", key], fn ? fn(stack) : stack);
   }
 
-  setCurScopeKey(key) {
+  setCurStackKey(key) {
     return this.set("curStackKey", key);
   }
 
@@ -278,5 +285,15 @@ export class Env extends Record({
   peekAt(key, dval = null) {
     const stack = this.stacks.get(key);
     return stack.size > 0 ? stack.peek() : dval;
+  }
+
+  //
+
+  setProp(key, val) {
+    return this.setIn(["props", key], val);
+  }
+
+  getProp(key, dval) {
+    return this.props.get(key, dval);
   }
 }
