@@ -3,11 +3,8 @@ const SSR_NODE = 1,
   TEXT_NODE = 3,
   EMPTY_OBJ = {},
   EMPTY_ARR = [],
-  SVG_NS = "http://www.w3.org/2000/svg";
-
-function getKey(vdom) {
-  return vdom?.key;
-}
+  SVG_NS = "http://www.w3.org/2000/svg",
+  getKey = (vdom) => vdom?.key;
 
 function patchProperty(node, key, _oldValue, newValue, isSvg) {
   if (key === "key") {
@@ -37,8 +34,8 @@ function createNode(vdom, isSvg0) {
 
   for (let i = 0; i < children.length; i += 1) {
     const child = vdomify(children[i]);
-    children[i] = child;
     node.appendChild(createNode(child, isSvg));
+    children[i] = child;
   }
 
   vdom.node = node;
@@ -68,7 +65,6 @@ function _patchNodeInLoop(oldVKids, newVKids, node, isSvg, oldI, newI) {
 
   const newVKidVDom = vdomify(newVKid);
   patchNode(node, oldVKid.node, oldVKid, newVKidVDom, isSvg);
-
   newVKids[newI] = newVKidVDom;
   return false;
 }
@@ -107,11 +103,11 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
   if (oldHead > oldTail) {
     while (newHead <= newTail) {
       const newVKidVDom = vdomify(newVKids[newHead]);
-      newVKids[newHead] = newVKidVDom;
       node.insertBefore(
         createNode(newVKidVDom, isSvg),
         oldVKids[oldHead]?.node,
       );
+      newVKids[newHead] = newVKidVDom;
       newHead += 1;
     }
   } else if (newHead > newTail) {
@@ -163,13 +159,8 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
       } else {
         const tmpVKid = keyed[newKey];
         if (tmpVKid != null) {
-          patchNode(
-            node,
-            node.insertBefore(tmpVKid.node, oldVKid?.node),
-            tmpVKid,
-            newVKid,
-            isSvg,
-          );
+          const newNode = node.insertBefore(tmpVKid.node, oldVKid?.node);
+          patchNode(node, newNode, tmpVKid, newVKid, isSvg);
           newKeyed[newKey] = true;
         } else {
           patchNode(node, oldVKid?.node, null, newVKid, isSvg);
@@ -221,10 +212,8 @@ function patchNode(parent, node, oldVNode, newVNode, isSvg) {
   return node;
 }
 
-function vdomify(newVNode) {
-  return newVNode !== true && newVNode !== false && newVNode
-    ? newVNode
-    : text("");
+function vdomify(vnode) {
+  return vnode !== true && vnode ? vnode : text("");
 }
 
 function recycleNode(node) {
@@ -240,35 +229,21 @@ function recycleNode(node) {
 }
 
 function createVNode(tag, props, children, type, node) {
-  return {
-    tag,
-    props,
-    key: props.key,
-    children,
-    type,
-    node,
-  };
+  const { key } = props;
+  return { tag, props, key, children, type, node };
 }
 
 export function text(value, node) {
   return createVNode(value, EMPTY_OBJ, EMPTY_ARR, TEXT_NODE, node);
 }
 
-export function h(tag, props, children = EMPTY_ARR) {
-  return createVNode(
-    tag,
-    props,
-    Array.isArray(children) ? children : [children],
-  );
+export function h(tag, props, childs = EMPTY_ARR) {
+  return createVNode(tag, props, Array.isArray(childs) ? childs : [childs]);
 }
 
 export function patch(node, vdom) {
-  const newNode = patchNode(
-    node.parentNode,
-    node,
-    node.vdom || recycleNode(node),
-    vdom,
-  );
+  const { parentNode, vdom: nodeVdom } = node,
+    newNode = patchNode(parentNode, node, nodeVdom ?? recycleNode(node), vdom);
   newNode.vdom = vdom;
   return newNode;
 }
