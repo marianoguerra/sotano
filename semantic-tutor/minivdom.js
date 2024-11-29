@@ -46,13 +46,13 @@ function createNode(vdom, isSvg0) {
 }
 
 function _patchProps(node, isSvg, oldProps, newProps, props) {
-  for (let i in props) {
+  for (let k in props) {
     const curProp =
-      i === "value" || i === "selected" || i === "checked"
-        ? node[i]
-        : oldProps[i];
-    if (curProp !== newProps[i]) {
-      patchProperty(node, i, oldProps[i], newProps[i], isSvg);
+      k === "value" || k === "selected" || k === "checked"
+        ? node[k]
+        : oldProps[k];
+    if (curProp !== newProps[k]) {
+      patchProperty(node, k, oldProps[k], newProps[k], isSvg);
     }
   }
 }
