@@ -13,7 +13,7 @@ function patchProperty(node, key, _oldValue, newValue, isSvg) {
   if (key === "key") {
     // do nothing
   } else if (!isSvg && key !== "list" && key !== "form" && key in node) {
-    node[key] = newValue == null ? "" : newValue;
+    node[key] = newValue ?? "";
   } else if (newValue == null || newValue === false) {
     node.removeAttribute(key);
   } else {
