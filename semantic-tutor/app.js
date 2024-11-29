@@ -116,7 +116,6 @@ function main() {
   const editor = setupMonaco();
 }
 
-// eslint-disable-next-line no-unused-vars
 function setupMonaco() {
   const editorNode = document.querySelector("#editor"),
     initialCode = [
@@ -139,7 +138,6 @@ function setupMonaco() {
   return editor;
 }
 
-function removeHighlightLine(editor, lineNumber) {}
 function highlightLine(editor, line) {
   const decoration = {
     range: new monaco.Range(line, 1, line, 1),
