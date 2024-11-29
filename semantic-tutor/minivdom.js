@@ -35,7 +35,7 @@ function createNode(vdom, isSvg0) {
     patchProperty(node, k, null, props[k], isSvg);
   }
 
-  for (let i = 0; i < children.length; i++) {
+  for (let i = 0; i < children.length; i += 1) {
     const child = vdomify(children[i]);
     children[i] = child;
     node.appendChild(createNode(child, isSvg));
@@ -106,19 +106,23 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
 
   if (oldHead > oldTail) {
     while (newHead <= newTail) {
+      const newVKidVDom = vdomify(newVKids[newHead]);
+      newVKids[newHead] = newVKidVDom;
       node.insertBefore(
-        createNode((newVKids[newHead] = vdomify(newVKids[newHead++])), isSvg),
+        createNode(newVKidVDom, isSvg),
         oldVKids[oldHead]?.node,
       );
+      newHead += 1;
     }
   } else if (newHead > newTail) {
     while (oldHead <= oldTail) {
-      node.removeChild(oldVKids[oldHead++].node);
+      node.removeChild(oldVKids[oldHead].node);
+      oldHead += 1;
     }
   } else {
     const newKeyed = {},
       keyed = {};
-    for (let i = oldHead; i <= oldTail; i++) {
+    for (let i = oldHead; i <= oldTail; i += 1) {
       const oldKey = oldVKids[i].key;
       if (oldKey != null) {
         keyed[oldKey] = oldVKids[i];
@@ -141,21 +145,21 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
         if (oldKey == null) {
           node.removeChild(oldVKid.node);
         }
-        oldHead++;
+        oldHead += 1;
         continue;
       }
 
       if (newKey == null || oldVNode.type === SSR_NODE) {
         if (oldKey == null) {
           patchNode(node, oldVKid?.node, oldVKid, newVKid, isSvg);
-          newHead++;
+          newHead += 1;
         }
-        oldHead++;
+        oldHead += 1;
       } else if (oldKey === newKey) {
         patchNode(node, oldVKid.node, oldVKid, newVKid, isSvg);
         newKeyed[newKey] = true;
-        oldHead++;
-        newHead++;
+        oldHead += 1;
+        newHead += 1;
       } else {
         const tmpVKid = keyed[newKey];
         if (tmpVKid != null) {
@@ -171,7 +175,7 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
           patchNode(node, oldVKid?.node, null, newVKid, isSvg);
         }
 
-        newHead++;
+        newHead += 1;
       }
     }
 
@@ -203,10 +207,9 @@ function patchNode(parent, node, oldVNode, newVNode, isSvg) {
       node.nodeValue = newVNode.tag;
     }
   } else if (oldVNode == null || oldVNode.tag !== newVNode.tag) {
-    node = parent.insertBefore(
-      createNode((newVNode = vdomify(newVNode)), isSvg),
-      node,
-    );
+    const newVNodeVDom = vdomify(newVNode);
+    node = parent.insertBefore(createNode(newVNodeVDom, isSvg), node);
+    newVNode = newVNodeVDom;
     if (oldVNode != null) {
       parent.removeChild(oldVNode.node);
     }
