@@ -57,6 +57,22 @@ function _patchProps(node, isSvg, oldProps, newProps, props) {
   }
 }
 
+function _patchNodeInLoop(oldVKids, newVKids, node, isSvg, oldI, newI) {
+  const oldVKid = oldVKids[oldI],
+    oldKey = getKey(oldVKid),
+    newVKid = newVKids[newI];
+
+  if (oldKey == null || oldKey !== getKey(newVKid)) {
+    return true;
+  }
+
+  const newVKidVDom = vdomify(newVKid);
+  patchNode(node, oldVKid.node, oldVKid, newVKidVDom, isSvg);
+
+  newVKids[newI] = newVKidVDom;
+  return false;
+}
+
 function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
   const isSvg = isSvg0 || newVNode.tag === "svg",
     oldProps = oldVNode.props,
@@ -73,35 +89,17 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
   _patchProps(node, isSvg, oldProps, newProps, newProps);
 
   while (newHead <= newTail && oldHead <= oldTail) {
-    const oldVKid = oldVKids[oldHead],
-      oldKey = getKey(oldVKid),
-      newVKid = newVKids[newHead];
-
-    if (oldKey == null || oldKey !== getKey(newVKid)) {
+    if (_patchNodeInLoop(oldVKids, newVKids, node, isSvg, oldHead, newHead)) {
       break;
     }
-
-    const newVKidVDom = vdomify(newVKid);
-    patchNode(node, oldVKid.node, oldVKid, newVKidVDom, isSvg);
-
-    newVKids[newHead] = newVKidVDom;
     oldHead += 1;
     newHead += 1;
   }
 
   while (newHead <= newTail && oldHead <= oldTail) {
-    const oldVKid = oldVKids[oldTail],
-      oldKey = getKey(oldVKid),
-      newVKid = newVKids[newTail];
-
-    if (oldKey == null || oldKey !== getKey(newVKid)) {
+    if (_patchNodeInLoop(oldVKids, newVKids, node, isSvg, oldTail, newTail)) {
       break;
     }
-
-    const newVKidDom = vdomify(newVKid);
-    patchNode(node, oldVKid.node, oldVKid, newVKidDom, isSvg);
-
-    newVKids[newTail] = newVKidDom;
     oldTail -= 1;
     newTail -= 1;
   }
