@@ -6,7 +6,7 @@ const SSR_NODE = 1,
   SVG_NS = "http://www.w3.org/2000/svg";
 
 function getKey(vdom) {
-  return vdom == null ? vdom : vdom.key;
+  return vdom?.key;
 }
 
 function patchProperty(node, key, _oldValue, newValue, isSvg) {
