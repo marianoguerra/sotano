@@ -102,11 +102,9 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
 
   if (oldHead > oldTail) {
     while (newHead <= newTail) {
-      const newVKidVDom = vdomify(newVKids[newHead]);
-      node.insertBefore(
-        createNode(newVKidVDom, isSvg),
-        oldVKids[oldHead]?.node,
-      );
+      const newVKidVDom = vdomify(newVKids[newHead]),
+        newNode = createNode(newVKidVDom, isSvg);
+      node.insertBefore(newNode, oldVKids[oldHead]?.node);
       newVKids[newHead] = newVKidVDom;
       newHead += 1;
     }
@@ -165,7 +163,6 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
         } else {
           patchNode(node, oldVKid?.node, null, newVKid, isSvg);
         }
-
         newHead += 1;
       }
     }
@@ -189,11 +186,7 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
 function patchNode(parent, node, oldVNode, newVNode, isSvg) {
   if (oldVNode === newVNode) {
     // do nothing
-  } else if (
-    oldVNode != null &&
-    oldVNode.type === TEXT_NODE &&
-    newVNode.type === TEXT_NODE
-  ) {
+  } else if (oldVNode?.type === TEXT_NODE && newVNode.type === TEXT_NODE) {
     if (oldVNode.tag !== newVNode.tag) {
       node.nodeValue = newVNode.tag;
     }
