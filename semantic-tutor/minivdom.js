@@ -128,7 +128,11 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
     while (newHead <= newTail) {
       const oldVKid = oldVKids[oldHead],
         oldKey = getKey(oldVKid),
-        newKey = getKey((newVKids[newHead] = vdomify(newVKids[newHead])));
+        newVKid = newVKids[newHead],
+        newVKidVDom = vdomify(newVKid),
+        newKey = getKey(newVKidVDom);
+
+      newVKids[newHead] = newVKidVDom;
 
       if (
         newKeyed[oldKey] ||
@@ -143,30 +147,30 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
 
       if (newKey == null || oldVNode.type === SSR_NODE) {
         if (oldKey == null) {
-          patchNode(node, oldVKid?.node, oldVKid, newVKids[newHead], isSvg);
+          patchNode(node, oldVKid?.node, oldVKid, newVKid, isSvg);
           newHead++;
         }
         oldHead++;
+      } else if (oldKey === newKey) {
+        patchNode(node, oldVKid.node, oldVKid, newVKid, isSvg);
+        newKeyed[newKey] = true;
+        oldHead++;
+        newHead++;
       } else {
-        if (oldKey === newKey) {
-          patchNode(node, oldVKid.node, oldVKid, newVKids[newHead], isSvg);
+        const tmpVKid = keyed[newKey];
+        if (tmpVKid != null) {
+          patchNode(
+            node,
+            node.insertBefore(tmpVKid.node, oldVKid?.node),
+            tmpVKid,
+            newVKid,
+            isSvg,
+          );
           newKeyed[newKey] = true;
-          oldHead++;
         } else {
-          const tmpVKid = keyed[newKey];
-          if (tmpVKid != null) {
-            patchNode(
-              node,
-              node.insertBefore(tmpVKid.node, oldVKid?.node),
-              tmpVKid,
-              newVKids[newHead],
-              isSvg,
-            );
-            newKeyed[newKey] = true;
-          } else {
-            patchNode(node, oldVKid?.node, null, newVKids[newHead], isSvg);
-          }
+          patchNode(node, oldVKid?.node, null, newVKid, isSvg);
         }
+
         newHead++;
       }
     }
@@ -179,9 +183,9 @@ function _patchNodeElse(node, oldVNode, newVNode, isSvg0) {
       }
     }
 
-    for (const i in keyed) {
-      if (newKeyed[i] == null) {
-        node.removeChild(keyed[i].node);
+    for (const k in keyed) {
+      if (newKeyed[k] == null) {
+        node.removeChild(keyed[k].node);
       }
     }
   }
