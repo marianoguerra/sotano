@@ -570,7 +570,7 @@ export function div() {
 export function eq() {
   return new Eq();
 }
-export function notEq() {
+export function ne() {
   return new NotEq();
 }
 export function gt() {

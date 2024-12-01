@@ -4,6 +4,7 @@ import * as monaco from "./deps/monaco-editor.js";
 import { genTags, patch } from "./dom.js";
 import { LOCAL } from "./names.js";
 import { Env, Scope, Frame } from "./names.js";
+import { parse } from "./namelang.js";
 import {
   VM,
   push,
@@ -365,38 +366,22 @@ class VMView {
     this.pc = 0;
     this.history = new Stack();
 
-    const k1 = "k1",
-      v1 = 42,
-      v2 = 123;
-    this.code = [
-      push("My Title"),
-      setFrameTitle(),
-      push("Note 1"),
-      addFrameNote(),
-      push("Note 2"),
-      addFrameNote(),
-      push(v1),
-      bind(k1),
-      enter("myscope"),
-      push(v2),
-      rebind(k1),
-      setProp("l", "1"),
-      find(k1),
-      nop(),
-      push(v1),
-      push(v2),
-      neg(),
-      add(),
-      mul(),
-      push(10),
-      setProp("l", "2"),
-      eq(),
-      not(),
-      pop(),
-      setProp("l", "3"),
-      leave(),
-      leaveAt(LOCAL),
-    ];
+    const code = `
+      "My Title" setFrameTitle
+      "Note 1" addFrameNote
+      "Note 2" addFrameNote
+      42 bind("k1")
+      enter("myscope")
+      100 rebind("k1")
+      line(1)
+      $k1 42 100 + * 10
+      line(2)
+      == pop
+      line(3)
+      leave
+      leaveAt("local")
+      `;
+    this.code = parse(code);
   }
   toDOM() {
     return div("vmview", this._codeToDOM(), this.vm.toDOM());
