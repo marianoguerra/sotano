@@ -8,11 +8,17 @@
     </head>
 
     <body>
-        <div id="app"></div>
-        <div id="editor" style="height: 50vh"></div>
-        <!-- <script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.7/require.min.js"></script> -->
+        <div class="root">
+            <div id="app"></div>
+            <div id="editor" style="height: 50vh; padding: var(--size-3)"></div>
+        </div>
         <script type="module" src="./app.js"></script>
         <style>
+            .root {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--size-3);
+            }
             .highlightLine {
                 background-color: rgba(255, 255, 0, 0.3);
             }
